@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- EXACT HEAD SCRIPT PROVIDED BY USER -->
+    <!-- YOUR DIRECT HEAD SCRIPT BLOCK -->
     <script>
     var o_options = {
         domain: 'jyz.outseta.com',
@@ -71,15 +71,6 @@
             border: none;
         }
 
-        .btn-primary {
-            background-color: #26a69a;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2bbbad;
-        }
-
         .btn-secondary {
             background-color: transparent;
             color: #9ca3af;
@@ -91,13 +82,19 @@
             border-color: rgba(255, 255, 255, 0.25);
         }
 
-        /* Main Application Layout Frame */
-        .iframe-container {
+        /* Dual Display Layout Frame */
+        .workspace-layout {
+            display: flex;
             flex-grow: 1;
-            position: relative;
             width: 100%;
             height: calc(100% - 85px);
             overflow: hidden;
+        }
+
+        .iframe-container {
+            flex-grow: 1;
+            position: relative;
+            height: 100%;
         }
 
         iframe {
@@ -108,6 +105,21 @@
             height: calc(100% + 40px); /* Crops out Streamlit footer tab cleanly */
             border: none;
         }
+
+        /* Multi-Form Dynamic Sidebar Container */
+        .interactive-sidebar {
+            width: 440px;
+            height: 100%;
+            background-color: #070c14;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding: 24px;
+        }
+
+        /* Form states handling */
+        .sidebar-view { display: none; }
+        .sidebar-view.active { display: block; }
 
         /* Premium Risk Disclaimer Segment */
         .app-disclaimer {
@@ -125,45 +137,124 @@
             z-index: 10;
         }
 
-        /* STRIPE OVERFLOW MODAL PATCH */
-        [id^="outseta-"], .o-modal, #outseta-profile-embed, div[role="dialog"] {
-            max-height: 95vh !important;
-            height: auto !important;
-            overflow-y: visible !important;
-        }
-        .o-modal-inner, .o-profile-embed-inner, div[class*="modal-content"] {
-            max-height: 80vh !important;
-            overflow-y: auto !important;
+        /* Internal form element tweaks for better scroll boundaries */
+        .interactive-sidebar div {
+            max-height: 100% !important;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header View Configuration linked exactly to Outseta popups -->
+    <!-- Header View Layout Configuration -->
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
-            <!-- Outseta's exact hashes will automatically handle opening widgets and toggling visibility -->
-            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true" target="_blank" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
-            <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
-            <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1">⚙️ Settings</a>
+            <!-- Navigation links to control the dynamic sidebar view states -->
+            <button class="btn btn-secondary" id="btn-show-register" data-o-anonymous="1">Upgrade/Register</button>
+            <button class="btn btn-secondary" id="btn-show-login" data-o-anonymous="1">Sign In</button>
+            <button class="btn btn-secondary" id="btn-show-profile" data-o-authenticated="1">⚙️ Settings</button>
             <a href="#o-logout-link" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
         </div>
     </header>
 
-    <!-- Core Engine App Iframe -->
-    <div class="iframe-container">
-        <iframe 
-            id="engine-iframe"
-            src="https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true" 
-            allow="clipboard-read; clipboard-write">
-        </iframe>
+    <!-- Core App Canvas Workspace -->
+    <div class="workspace-layout">
+        <div class="iframe-container">
+            <iframe 
+                id="engine-iframe"
+                src="https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true" 
+                allow="clipboard-read; clipboard-write">
+            </iframe>
+        </div>
+
+        <!-- THE UNIFIED INLINE EMBED SIDEBAR PANEL -->
+        <aside class="interactive-sidebar" id="app-sidebar">
+            
+            <!-- 1. REGISTRATION INLINE EMBED -->
+            <div id="view-register" class="sidebar-view active">
+                <div data-o-auth="1"
+                     data-widget-mode="register"
+                     data-plan-uid="awxoPv9V"
+                     data-plan-payment-term="month"
+                     data-skip-plan-options="true"
+                     data-mode="embed">
+                </div>
+            </div>
+
+            <!-- 2. LOGIN INLINE EMBED -->
+            <div id="view-login" class="sidebar-view">
+                <div data-o-auth="1"
+                     data-mode="embed"
+                     data-widget-mode="login">
+                </div>
+            </div>
+
+            <!-- 3. PROFILE / BILLING INLINE EMBED -->
+            <div id="view-profile" class="sidebar-view">
+                <div data-o-profile="1"
+                     data-mode="embed">
+                </div>
+            </div>
+
+        </aside>
     </div>
 
-    <!-- Replacement Premium Financial Disclaimer Footer -->
+    <!-- Premium Financial Disclaimer Footer -->
     <footer class="app-disclaimer">
         ⚠️ <strong>Risk Disclosure:</strong> All quantitative outputs, trend summaries, and calculated expected moves are generated strictly for computational educational research and do not constitute formal investment advice.
     </footer>
+
+    <!-- STABLE SIDEBAR STATE CONTROLLER SCRIPT -->
+    <script>
+        const appIframe = document.getElementById('engine-iframe');
+        const sidebar = document.getElementById('app-sidebar');
+        
+        const views = {
+            register: document.getElementById('view-register'),
+            login: document.getElementById('view-login'),
+            profile: document.getElementById('view-profile')
+        };
+
+        // Changes active display panel inside the sidebar space smoothly
+        function switchSidebarView(targetKey) {
+            Object.keys(views).forEach(key => {
+                if (key === targetKey) {
+                    views[key].classList.add('active');
+                } else {
+                    views[key].classList.remove('active');
+                }
+            });
+            sidebar.style.display = 'block';
+        }
+
+        // Handle user authentication transitions natively
+        Outseta.on('init', function() {
+            if (Outseta.getAccessToken()) {
+                switchSidebarView('profile');
+                sidebar.style.display = 'none'; // Auto-hide sidebar to give premium users full screen space
+                appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+            } else {
+                switchSidebarView('register');
+            }
+        });
+
+        Outseta.on('accessToken.set', function(token) {
+            switchSidebarView('profile');
+            sidebar.style.display = 'none';
+            appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+        });
+        
+        Outseta.on('accessToken.removed', function() {
+            switchSidebarView('login');
+            sidebar.style.display = 'block';
+            appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
+        });
+
+        // Setup manual header menu toggle triggers
+        document.getElementById('btn-show-register').addEventListener('click', () => switchSidebarView('register'));
+        document.getElementById('btn-show-login').addEventListener('click', () => switchSidebarView('login'));
+        document.getElementById('btn-show-profile').addEventListener('click', () => switchSidebarView('profile'));
+    </script>
 
 </body>
 </html>
