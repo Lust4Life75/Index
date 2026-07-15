@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- EXACT HEAD SCRIPT AS SET OUT BY OUTSETA -->
+    <!-- BULLETPROOF OUTSETA HEAD SCRIPT CONFIGURATION -->
     <script>
       var o_options = {
         domain: 'jyz.outseta.com',
@@ -14,7 +14,7 @@
         tokenStorage: 'local'
       };
     </script>
-    <script src="https://cdn.outseta.com/outseta.min.js" data-options="o_options"></script>
+    <script src="https://cdn.outseta.com/outseta.min.js" data-options="o_options" defer></script>
 
     <style>
         html, body {
@@ -139,22 +139,23 @@
 </head>
 <body>
 
-    <!-- Header View Configuration with Exact Outseta Links -->
+    <!-- Header View Configuration with Adaptive Absolute Fallbacks -->
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
-            <!-- ANONYMOUS ONLY LINKS -->
-            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true" target="_blank" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
-            <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
+            <!-- ANONYMOUS STATE LINKS -->
+            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true" target="_blank" class="btn btn-primary" data-o-anonymous="1" id="link-upgrade">Upgrade to Pro</a>
+            <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1" id="link-login">Sign In</a>
 
-            <!-- AUTHENTICATED ONLY LINKS -->
-            <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1">⚙️ Settings</a>
-            <a href="#o-logout-link" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
+            <!-- AUTHENTICATED STATE LINKS -->
+            <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1" id="link-settings">⚙️ Settings</a>
+            <a href="https://jyz.outseta.com/auth?widgetMode=logout" class="btn btn-secondary" data-o-authenticated="1" id="link-logout">Log Out</a>
         </div>
     </header>
 
     <!-- Core Engine App Iframe -->
     <div class="iframe-container">
+        <!-- Default Fallback Source (Free Tier) -->
         <iframe 
             id="engine-iframe"
             src="https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true" 
@@ -162,29 +163,59 @@
         </iframe>
     </div>
 
-    <!-- Premium Financial Disclaimer Footer -->
+    <!-- Replacement Premium Financial Disclaimer Footer -->
     <footer class="app-disclaimer">
         ⚠️ <strong>Risk Disclosure:</strong> All quantitative outputs, trend summaries, and calculated expected moves are generated strictly for computational educational research and do not constitute formal investment advice.
     </footer>
 
-    <!-- STREAMLIT FRAME STATE CONTROLLER -->
+    <!-- STATE AND POPUP SECURITY EVENT RUNNER -->
     <script>
         const appIframe = document.getElementById('engine-iframe');
 
-        // Dynamically upgrades the internal Streamlit frame state when tokens are set or pulled
-        Outseta.on('init', function() {
-            if (Outseta.getAccessToken()) {
-                appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+        // Handles background state checks once Outseta loads successfully
+        function processAuthState() {
+            if (typeof Outseta !== 'undefined') {
+                const token = Outseta.getAccessToken();
+                if (token) {
+                    appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+                } else {
+                    appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
+                }
+            }
+        }
+
+        // Inline intercept handlers to guarantee popup presentation even if initialization delays occur
+        document.getElementById('link-login').addEventListener('click', function(e) {
+            if (typeof Outseta !== 'undefined' && Outseta.auth) {
+                e.preventDefault();
+                Outseta.auth.open({ widgetMode: 'login' });
             }
         });
 
-        Outseta.on('accessToken.set', function(token) {
-            appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+        document.getElementById('link-settings').addEventListener('click', function(e) {
+            if (typeof Outseta !== 'undefined' && Outseta.profile) {
+                e.preventDefault();
+                Outseta.profile.open();
+            }
         });
-        
-        Outseta.on('accessToken.removed', function() {
-            appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
+
+        document.getElementById('link-logout').addEventListener('click', function(e) {
+            if (typeof Outseta !== 'undefined' && Outseta.auth) {
+                e.preventDefault();
+                Outseta.auth.logout();
+            }
         });
+
+        // Initialize listeners
+        if (typeof Outseta !== 'undefined') {
+            Outseta.on('init', processAuthState);
+            Outseta.on('accessToken.set', () => processAuthState());
+            Outseta.on('accessToken.removed', () => processAuthState());
+        } else {
+            window.addEventListener('DOMContentLoaded', () => {
+                setTimeout(processAuthState, 1000);
+            });
+        }
     </script>
 
 </body>
