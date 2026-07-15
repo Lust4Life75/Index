@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- OUTSETA INITIALIZATION OPTIONS (With Explicit Packages Enabled) -->
+    <!-- OUTSETA INITIALIZATION OPTIONS -->
     <script>
       var o_options = {
         domain: 'jyz.outseta.com',
-        load: 'auth,profile', /* Explicitly loads the auth components to prevent white screens */
+        load: 'auth,profile',
         monitorDom: true,
-        tokenStorage: 'local' /* Keeps users logged in after closing the tab/browser */
+        tokenStorage: 'local'
       };
     </script>
     <script src="https://cdn.outseta.com/outseta.min.js" data-options="o_options"></script>
@@ -39,6 +39,8 @@
             align-items: center;
             height: 50px;
             box-sizing: border-box;
+            position: relative;
+            z-index: 10;
         }
 
         .logo {
@@ -66,12 +68,12 @@
             transition: all 0.2s ease;
             display: inline-block;
             box-sizing: border-box;
+            border: none;
         }
 
         .btn-primary {
             background-color: #26a69a;
             color: white;
-            border: none;
         }
 
         .btn-primary:hover {
@@ -89,11 +91,18 @@
             border-color: rgba(255, 255, 255, 0.25);
         }
 
+        /* State visibility controllers */
+        .logged-out-only { display: inline-block; }
+        .logged-in-only { display: none; }
+
+        /* Main Application Layout Frame */
         .iframe-container {
             flex-grow: 1;
             position: relative;
             width: 100%;
-            height: calc(100% - 50px);
+            /* Pushes down the iframe window slightly to crop out the white Streamlit footer tab cleanly */
+            height: calc(100% - 85px);
+            overflow: hidden;
         }
 
         iframe {
@@ -101,53 +110,56 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: calc(100% + 40px); /* Crops the embedded footer out of view */
             border: none;
         }
 
-        /* STRIPE IFRAME OVERFLOW LAYOUT PATCH */
-        [id^="outseta-"], 
-        .o-modal, 
-        #outseta-profile-embed,
-        div[role="dialog"] {
+        /* Premium Risk Disclaimer Segment */
+        .app-disclaimer {
+            background-color: #051923;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #4b5563;
+            font-size: 11px;
+            text-align: center;
+            padding: 10px 24px;
+            height: 35px;
+            box-sizing: border-box;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            z-index: 10;
+        }
+
+        /* STRIPE OVERFLOW PATCH */
+        [id^="outseta-"], .o-modal, #outseta-profile-embed, div[role="dialog"] {
             max-height: 95vh !important;
             height: auto !important;
             overflow-y: visible !important;
         }
-
-        .o-modal-inner,
-        .o-profile-embed-inner,
-        div[class*="modal-content"] {
+        .o-modal-inner, .o-profile-embed-inner, div[class*="modal-content"] {
             max-height: 80vh !important;
             overflow-y: auto !important;
-            box-sizing: border-box !important;
-        }
-
-        iframe[src*="stripe.com"],
-        div[class*="stripe"],
-        .StripeElement {
-            overflow: visible !important;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header containing the login/upgrade/settings states -->
+    <!-- Header View Configuration -->
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
-            <!-- SHOWN TO ANONYMOUS USERS -->
-            <button class="btn btn-primary" data-o-anonymous="1" data-o-auth="1" data-widget-mode="register" data-plan-uid="awxoPv9V" data-plan-payment-term="month" data-skip-plan-options="true">Upgrade to Pro</button>
-            <button class="btn btn-secondary" data-o-anonymous="1" data-o-auth="1" data-widget-mode="login">Sign In</button>
+            <!-- ANONYMOUS STATE CONTROLS -->
+            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true" target="_blank" class="btn btn-primary logged-out-only" id="nav-upgrade">Upgrade to Pro</a>
+            <button class="btn btn-secondary logged-out-only" id="nav-login">Sign In</button>
 
-            <!-- SHOWN TO AUTHENTICATED MEMBERS (SETTINGS & LOG OUT) -->
-            <button class="btn btn-secondary" data-o-authenticated="1" data-o-profile="1">⚙️ Settings</button>
-            <button class="btn btn-secondary" data-o-authenticated="1" data-o-logout-link="1">Log Out</button>
+            <!-- AUTHENTICATED STATE CONTROLS -->
+            <button class="btn btn-secondary logged-in-only" id="nav-settings">⚙️ Settings</button>
+            <button class="btn btn-secondary logged-in-only" id="nav-logout">Log Out</button>
         </div>
     </header>
 
+    <!-- Core Engine App Iframe -->
     <div class="iframe-container">
-        <!-- Default Fallback Source (Free Tier) -->
         <iframe 
             id="engine-iframe"
             src="https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true" 
@@ -155,14 +167,61 @@
         </iframe>
     </div>
 
-    <!-- JavaScript that upgrades the Streamlit frame dynamically based on Login Status -->
+    <!-- Replacement Premium Financial Disclaimer Footer -->
+    <footer class="app-disclaimer">
+        ⚠️ <strong>Risk Disclosure:</strong> All algorithmic outputs, vector trend summaries, and quantitative expected moves are generated strictly for computational educational research and do not constitute formal investment advice.
+    </footer>
+
+    <!-- STATE MANAGEMENT SCRIPT -->
     <script>
+        const loggedOutElements = document.querySelectorAll('.logged-out-only');
+        const loggedInElements = document.querySelectorAll('.logged-in-only');
+        const appIframe = document.getElementById('engine-iframe');
+
+        // Function to enforce the proper UI states across buttons
+        function updateUIState(isAuthenticated) {
+            if (isAuthenticated) {
+                loggedOutElements.forEach(el => el.style.display = 'none');
+                loggedInElements.forEach(el => el.style.display = 'inline-block');
+            } else {
+                loggedOutElements.forEach(el => el.style.display = 'inline-block');
+                loggedInElements.forEach(el => el.style.display = 'none');
+            }
+        }
+
+        // Direct Outseta Core Integration Events
         Outseta.on('accessToken.set', function(token) {
-            document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+            updateUIState(true);
+            appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
         });
         
         Outseta.on('accessToken.removed', function() {
-            document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
+            updateUIState(false);
+            appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
+        });
+
+        // Click Bindings for Popups and Methods
+        document.getElementById('nav-login').addEventListener('click', function() {
+            Outseta.auth.open({ widgetMode: 'login' });
+        });
+
+        document.getElementById('nav-settings').addEventListener('click', function() {
+            Outseta.profile.open();
+        });
+
+        document.getElementById('nav-logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            Outseta.auth.logout();
+        });
+
+        // Fallback safety layer to double-check storage tokens on page initialization
+        window.addEventListener('DOMContentLoaded', (event) => {
+            if (localStorage.getItem('outseta:accessToken')) {
+                updateUIState(true);
+                appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+            } else {
+                updateUIState(false);
+            }
         });
     </script>
 
