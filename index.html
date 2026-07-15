@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- OUTSETA INITIALIZATION OPTIONS -->
+    <!-- MATCHED OUTSETA HEAD SCRIPT CONFIGURATION -->
     <script>
       var o_options = {
         domain: 'jyz.outseta.com',
-        load: 'auth,profile',
+        load: 'auth,customForm,emaillist,leadCapture,nocode,profile,support',
         monitorDom: true,
         tokenStorage: 'local'
       };
@@ -91,7 +91,7 @@
             border-color: rgba(255, 255, 255, 0.25);
         }
 
-        /* State visibility controllers */
+        /* Visibility classes for explicit auth states */
         .logged-out-only { display: inline-block; }
         .logged-in-only { display: none; }
 
@@ -109,7 +109,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: calc(100% + 40px); /* Crops the embedded footer out of view */
+            height: calc(100% + 40px); /* Crops out Streamlit footer tab cleanly */
             border: none;
         }
 
@@ -129,7 +129,7 @@
             z-index: 10;
         }
 
-        /* STRIPE OVERFLOW PATCH */
+        /* STRIPE OVERFLOW MODAL PATCH */
         [id^="outseta-"], .o-modal, #outseta-profile-embed, div[role="dialog"] {
             max-height: 95vh !important;
             height: auto !important;
@@ -147,7 +147,7 @@
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
-            <!-- ANONYMOUS STATE CONTROLS -->
+            <!-- ANONYMOUS STATE CONTROLS (Direct checkout tabs) -->
             <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true" target="_blank" class="btn btn-primary logged-out-only" id="nav-upgrade">Upgrade to Pro</a>
             <button class="btn btn-secondary logged-out-only" id="nav-login">Sign In</button>
 
@@ -166,18 +166,18 @@
         </iframe>
     </div>
 
-    <!-- Replacement Premium Financial Disclaimer Footer -->
+    <!-- Premium Financial Disclaimer Footer -->
     <footer class="app-disclaimer">
-        ⚠️ <strong>Risk Disclosure:</strong> All algorithmic outputs, vector trend summaries, and quantitative expected moves are generated strictly for computational educational research and do not constitute formal investment advice.
+        ⚠️ <strong>Risk Disclosure:</strong> All quantitative outputs, trend summaries, and calculated expected moves are generated strictly for computational educational research and do not constitute formal investment advice.
     </footer>
 
-    <!-- STATE MANAGEMENT SCRIPT -->
+    <!-- STATE MANAGEMENT SYSTEM -->
     <script>
         const loggedOutElements = document.querySelectorAll('.logged-out-only');
         const loggedInElements = document.querySelectorAll('.logged-in-only');
         const appIframe = document.getElementById('engine-iframe');
 
-        // Function to enforce the proper UI states across buttons
+        // Function to handle layout visibility toggles
         function updateUIState(isAuthenticated) {
             if (isAuthenticated) {
                 loggedOutElements.forEach(el => el.style.display = 'none');
@@ -188,7 +188,17 @@
             }
         }
 
-        // Direct Outseta Core Integration Events
+        // Outseta Initialization & Event Triggers
+        Outseta.on('init', function() {
+            const token = Outseta.getAccessToken();
+            if (token) {
+                updateUIState(true);
+                appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+            } else {
+                updateUIState(false);
+            }
+        });
+
         Outseta.on('accessToken.set', function(token) {
             updateUIState(true);
             appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
@@ -199,7 +209,7 @@
             appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
         });
 
-        // Click Bindings for Popups and Methods
+        // Event Actions for Popup triggers
         document.getElementById('nav-login').addEventListener('click', function() {
             Outseta.auth.open({ widgetMode: 'login' });
         });
@@ -211,17 +221,6 @@
         document.getElementById('nav-logout').addEventListener('click', function(e) {
             e.preventDefault();
             Outseta.auth.logout();
-        });
-
-        // Native initialization hook to handle loading state
-        Outseta.on('init', function() {
-            const token = Outseta.getAccessToken();
-            if (token) {
-                updateUIState(true);
-                appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
-            } else {
-                updateUIState(false);
-            }
         });
     </script>
 
