@@ -100,7 +100,6 @@
             flex-grow: 1;
             position: relative;
             width: 100%;
-            /* Pushes down the iframe window slightly to crop out the white Streamlit footer tab cleanly */
             height: calc(100% - 85px);
             overflow: hidden;
         }
@@ -214,9 +213,10 @@
             Outseta.auth.logout();
         });
 
-        // Fallback safety layer to double-check storage tokens on page initialization
-        window.addEventListener('DOMContentLoaded', (event) => {
-            if (localStorage.getItem('outseta:accessToken')) {
+        // Native initialization hook to handle loading state
+        Outseta.on('init', function() {
+            const token = Outseta.getAccessToken();
+            if (token) {
                 updateUIState(true);
                 appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
             } else {
