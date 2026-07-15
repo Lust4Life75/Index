@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- 1. OUTSETA INITIALIZATION OPTIONS -->
+    <!-- OUTSETA INITIALIZATION OPTIONS (With Remember Login Enabled) -->
     <script>
       var o_options = {
         domain: 'jyz.outseta.com',
-        monitorDom: true
+        monitorDom: true,
+        tokenStorage: 'local' /* Keeps users logged in after closing the tab/browser */
       };
     </script>
     <script src="https://cdn.outseta.com/outseta.min.js" data-options="o_options"></script>
@@ -103,11 +104,7 @@
             border: none;
         }
 
-        /* -------------------------------------------------------------
-           STRIPE IFRAME OVERFLOW LAYOUT PATCH
-           Prevents Stripe's card entry from clipping or overlapping
-           inside the Outseta embed window.
-        ------------------------------------------------------------- */
+        /* STRIPE IFRAME OVERFLOW LAYOUT PATCH */
         #outseta-profile-embed, 
         .o-modal,
         [id^="outseta-"] {
