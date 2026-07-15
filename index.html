@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Institutional Earnings Engine</title>
+    
+    <!-- Outseta Initialization Options -->
+    <script>
+      var o_options = {
+        domain: 'jyz.outseta.com',
+        monitorDom: true
+      };
+    </script>
+    <script src="https://cdn.outseta.com/outseta.min.js" data-options="o_options"></script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #0b0f19;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Sleek Premium Top Header Bar */
+        .app-header {
+            background-color: #051923;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+        }
+
+        .logo {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #26a69a;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #2bbbad;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #9ca3af;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .iframe-container {
+            flex-grow: 1;
+            position: relative;
+            width: 100%;
+            height: calc(100% - 50px);
+        }
+
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header containing the login/upgrade states -->
+    <header class="app-header">
+        <div class="logo">🦅 Institutional Earnings Engine</div>
+        <div class="auth-buttons">
+            <!-- SHOWN TO ANONYMOUS USERS -->
+            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
+            <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
+
+            <!-- SHOWN TO AUTHENTICATED MEMBERS -->
+            <a href="#" class="btn btn-secondary" data-o-profile-link="1" data-o-authenticated="1">My Account</a>
+            <a href="https://jyz.outseta.com/auth?widgetMode=logout" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
+        </div>
+    </header>
+
+    <div class="iframe-container">
+        <!-- The Iframe begins as Free Tier by default -->
+        <iframe 
+            id="engine-iframe"
+            src="https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true" 
+            allow="clipboard-read; clipboard-write">
+        </iframe>
+    </div>
+
+    <!-- JavaScript that upgrades the Streamlit frame dynamically when a user is logged in -->
+    <script>
+        // Check authentication token on load
+        Outseta.on('accessToken.set', function(token) {
+            document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
+        });
+        Outseta.on('accessToken.removed', function() {
+            document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
+        });
+    </script>
+
+</body>
+</html>
