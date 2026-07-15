@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- YOUR DIRECT HEAD SCRIPT BLOCK -->
+    <!-- EXACT HEAD SCRIPT -->
     <script>
     var o_options = {
         domain: 'jyz.outseta.com',
@@ -91,7 +91,7 @@
             border-color: rgba(255, 255, 255, 0.25);
         }
 
-        /* Main Workspace Layout Frame (Restored to 100% full screen) */
+        /* Main Workspace Layout Frame */
         .iframe-container {
             flex-grow: 1;
             position: relative;
@@ -100,7 +100,7 @@
             overflow: hidden;
         }
 
-        iframe {
+        iframe#engine-iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -124,19 +124,6 @@
             text-overflow: ellipsis;
             z-index: 10;
         }
-
-        /* =============================================================
-           STRIPE & POPUP OVERFLOW PATCH
-        ============================================================= */
-        [id^="outseta-"], .o-modal, #outseta-profile-embed, div[role="dialog"] {
-            max-height: 95vh !important;
-            height: auto !important;
-            overflow-y: visible !important;
-        }
-        .o-modal-inner, .o-profile-embed-inner, div[class*="modal-content"] {
-            max-height: 85vh !important;
-            overflow-y: auto !important;
-        }
     </style>
 </head>
 <body>
@@ -145,18 +132,22 @@
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
-            <!-- ANONYMOUS ONLY (Fixed capital 'W' in planUid) -->
+            <!-- UPGRADE TO PRO: Skips options and forces the Stripe checkout for Plan aWxoPv9V -->
             <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=aWxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
-            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=aWxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign Up</a>
+            
+            <!-- SIGN UP: Standard free registration / account creation -->
+            <a href="https://jyz.outseta.com/auth?widgetMode=register#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign Up</a>
+            
+            <!-- SIGN IN -->
             <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
 
-            <!-- AUTHENTICATED ONLY -->
+            <!-- AUTHENTICATED LINKS -->
             <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1">⚙️ Settings</a>
             <a href="#o-logout-link" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
         </div>
     </header>
 
-    <!-- Core App Canvas Workspace (100% width) -->
+    <!-- Core App Canvas Workspace -->
     <div class="iframe-container">
         <iframe 
             id="engine-iframe"
