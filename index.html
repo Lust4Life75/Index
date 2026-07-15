@@ -127,7 +127,6 @@
 
         /* =============================================================
            STRIPE & POPUP OVERFLOW PATCH
-           Forces Outseta's popups to stay beautifully aligned on screen.
         ============================================================= */
         [id^="outseta-"], .o-modal, #outseta-profile-embed, div[role="dialog"] {
             max-height: 95vh !important;
@@ -146,9 +145,12 @@
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
-            <!-- Dynamic popups trigger automatically on click based on hashes -->
+            <!-- ANONYMOUS ONLY (Will hide once user logs in) -->
             <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
+            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign Up</a>
             <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
+
+            <!-- AUTHENTICATED ONLY (Will show once user logs in) -->
             <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1">⚙️ Settings</a>
             <a href="#o-logout-link" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
         </div>
