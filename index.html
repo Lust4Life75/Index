@@ -104,15 +104,34 @@
             border: none;
         }
 
-        /* STRIPE IFRAME OVERFLOW LAYOUT PATCH */
-        #outseta-profile-embed, 
-        .o-modal,
-        [id^="outseta-"] {
-            max-height: 90vh !important;
-            overflow-y: auto !important;
+        /* =============================================================
+           CRITICAL STRIPE IFRAME OVERFLOW LAYOUT PATCH
+           Prevents Stripe's card entry from clipping or overlapping
+           inside the Outseta embed window.
+        ============================================================= */
+        /* Targets all Outseta overlay modals globally */
+        [id^="outseta-"], 
+        .o-modal, 
+        #outseta-profile-embed,
+        div[role="dialog"] {
+            max-height: 95vh !important;
+            height: auto !important;
+            overflow-y: visible !important;
         }
 
-        .o-modal-content {
+        /* Forces internal containers to be scrollable if contents run too deep */
+        .o-modal-inner,
+        .o-profile-embed-inner,
+        div[class*="modal-content"] {
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Forces Stripe Link checkout components to render safely without breaking limits */
+        iframe[src*="stripe.com"],
+        div[class*="stripe"],
+        .StripeElement {
             overflow: visible !important;
         }
     </style>
@@ -151,7 +170,7 @@
         
         // Triggered when user logs out
         Outseta.on('accessToken.removed', function() {
-            document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
+            document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhwaihtwhwy.streamlit.app/?embed=true";
         });
     </script>
 
