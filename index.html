@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- Outseta Initialization Options -->
+    <!-- 1. OUTSETA INITIALIZATION OPTIONS -->
     <script>
       var o_options = {
         domain: 'jyz.outseta.com',
@@ -102,6 +102,22 @@
             height: 100%;
             border: none;
         }
+
+        /* -------------------------------------------------------------
+           STRIPE IFRAME OVERFLOW LAYOUT PATCH
+           Prevents Stripe's card entry from clipping or overlapping
+           inside the Outseta embed window.
+        ------------------------------------------------------------- */
+        #outseta-profile-embed, 
+        .o-modal,
+        [id^="outseta-"] {
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+        }
+
+        .o-modal-content {
+            overflow: visible !important;
+        }
     </style>
 </head>
 <body>
@@ -114,8 +130,7 @@
             <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
             <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
 
-            <!-- SHOWN TO AUTHENTICATED MEMBERS (CLASSIC SETTINGS & LOG OUT) -->
-            <!-- Outseta's profile widget opens automatically on click -->
+            <!-- SHOWN TO AUTHENTICATED MEMBERS (SETTINGS & LOG OUT) -->
             <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1">⚙️ Settings</a>
             <a href="https://jyz.outseta.com/auth?widgetMode=logout" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
         </div>
