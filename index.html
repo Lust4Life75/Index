@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- OUTSETA INITIALIZATION OPTIONS (With Remember Login Enabled) -->
+    <!-- OUTSETA INITIALIZATION OPTIONS (With Explicit Packages Enabled) -->
     <script>
       var o_options = {
         domain: 'jyz.outseta.com',
+        load: 'auth,profile', /* Explicitly loads the auth components to prevent white screens */
         monitorDom: true,
         tokenStorage: 'local' /* Keeps users logged in after closing the tab/browser */
       };
@@ -104,12 +105,7 @@
             border: none;
         }
 
-        /* =============================================================
-           CRITICAL STRIPE IFRAME OVERFLOW LAYOUT PATCH
-           Prevents Stripe's card entry from clipping or overlapping
-           inside the Outseta embed window.
-        ============================================================= */
-        /* Targets all Outseta overlay modals globally */
+        /* STRIPE IFRAME OVERFLOW LAYOUT PATCH */
         [id^="outseta-"], 
         .o-modal, 
         #outseta-profile-embed,
@@ -119,7 +115,6 @@
             overflow-y: visible !important;
         }
 
-        /* Forces internal containers to be scrollable if contents run too deep */
         .o-modal-inner,
         .o-profile-embed-inner,
         div[class*="modal-content"] {
@@ -128,7 +123,6 @@
             box-sizing: border-box !important;
         }
 
-        /* Forces Stripe Link checkout components to render safely without breaking limits */
         iframe[src*="stripe.com"],
         div[class*="stripe"],
         .StripeElement {
@@ -143,12 +137,12 @@
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
             <!-- SHOWN TO ANONYMOUS USERS -->
-            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
-            <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
+            <button class="btn btn-primary" data-o-anonymous="1" data-o-auth="1" data-widget-mode="register" data-plan-uid="awxoPv9V" data-plan-payment-term="month" data-skip-plan-options="true">Upgrade to Pro</button>
+            <button class="btn btn-secondary" data-o-anonymous="1" data-o-auth="1" data-widget-mode="login">Sign In</button>
 
             <!-- SHOWN TO AUTHENTICATED MEMBERS (SETTINGS & LOG OUT) -->
-            <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1">⚙️ Settings</a>
-            <a href="https://jyz.outseta.com/auth?widgetMode=logout" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
+            <button class="btn btn-secondary" data-o-authenticated="1" data-o-profile="1">⚙️ Settings</button>
+            <button class="btn btn-secondary" data-o-authenticated="1" data-o-logout-link="1">Log Out</button>
         </div>
     </header>
 
@@ -163,14 +157,12 @@
 
     <!-- JavaScript that upgrades the Streamlit frame dynamically based on Login Status -->
     <script>
-        // Triggered automatically when Outseta detects a valid logged-in user session
         Outseta.on('accessToken.set', function(token) {
             document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
         });
         
-        // Triggered when user logs out
         Outseta.on('accessToken.removed', function() {
-            document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhwaihtwhwy.streamlit.app/?embed=true";
+            document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
         });
     </script>
 
