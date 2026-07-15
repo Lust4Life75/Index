@@ -27,7 +27,7 @@
             flex-direction: column;
         }
 
-        /* Sleek Premium Top Header Bar */
+        /* Premium Top Header Bar */
         .app-header {
             background-color: #051923;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -36,6 +36,7 @@
             justify-content: space-between;
             align-items: center;
             height: 50px;
+            box-sizing: border-box;
         }
 
         .logo {
@@ -50,6 +51,7 @@
         .auth-buttons {
             display: flex;
             gap: 12px;
+            align-items: center;
         }
 
         .btn {
@@ -61,6 +63,7 @@
             text-decoration: none;
             transition: all 0.2s ease;
             display: inline-block;
+            box-sizing: border-box;
         }
 
         .btn-primary {
@@ -103,7 +106,7 @@
 </head>
 <body>
 
-    <!-- Header containing the login/upgrade states -->
+    <!-- Header containing the login/upgrade/settings states -->
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
@@ -111,14 +114,15 @@
             <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
             <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
 
-            <!-- SHOWN TO AUTHENTICATED MEMBERS -->
-            <a href="#" class="btn btn-secondary" data-o-profile-link="1" data-o-authenticated="1">My Account</a>
+            <!-- SHOWN TO AUTHENTICATED MEMBERS (CLASSIC SETTINGS & LOG OUT) -->
+            <!-- Outseta's profile widget opens automatically on click -->
+            <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1">⚙️ Settings</a>
             <a href="https://jyz.outseta.com/auth?widgetMode=logout" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
         </div>
     </header>
 
     <div class="iframe-container">
-        <!-- The Iframe begins as Free Tier by default -->
+        <!-- Default Fallback Source (Free Tier) -->
         <iframe 
             id="engine-iframe"
             src="https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true" 
@@ -126,12 +130,14 @@
         </iframe>
     </div>
 
-    <!-- JavaScript that upgrades the Streamlit frame dynamically when a user is logged in -->
+    <!-- JavaScript that upgrades the Streamlit frame dynamically based on Login Status -->
     <script>
-        // Check authentication token on load
+        // Triggered automatically when Outseta detects a valid logged-in user session
         Outseta.on('accessToken.set', function(token) {
             document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
         });
+        
+        // Triggered when user logs out
         Outseta.on('accessToken.removed', function() {
             document.getElementById('engine-iframe').src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
         });
