@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Institutional Earnings Engine</title>
     
-    <!-- MATCHED OUTSETA HEAD SCRIPT CONFIGURATION -->
+    <!-- EXACT HEAD SCRIPT AS SET OUT BY OUTSETA -->
     <script>
       var o_options = {
         domain: 'jyz.outseta.com',
@@ -91,10 +91,6 @@
             border-color: rgba(255, 255, 255, 0.25);
         }
 
-        /* Visibility classes for explicit auth states */
-        .logged-out-only { display: inline-block; }
-        .logged-in-only { display: none; }
-
         /* Main Application Layout Frame */
         .iframe-container {
             flex-grow: 1;
@@ -143,17 +139,17 @@
 </head>
 <body>
 
-    <!-- Header View Configuration -->
+    <!-- Header View Configuration with Exact Outseta Links -->
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
-            <!-- ANONYMOUS STATE CONTROLS (Direct checkout tabs) -->
-            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true" target="_blank" class="btn btn-primary logged-out-only" id="nav-upgrade">Upgrade to Pro</a>
-            <button class="btn btn-secondary logged-out-only" id="nav-login">Sign In</button>
+            <!-- ANONYMOUS ONLY LINKS -->
+            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=awxoPv9V&planPaymentTerm=month&skipPlanOptions=true" target="_blank" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
+            <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
 
-            <!-- AUTHENTICATED STATE CONTROLS -->
-            <button class="btn btn-secondary logged-in-only" id="nav-settings">⚙️ Settings</button>
-            <button class="btn btn-secondary logged-in-only" id="nav-logout">Log Out</button>
+            <!-- AUTHENTICATED ONLY LINKS -->
+            <a href="https://jyz.outseta.com/profile#o-authenticated" class="btn btn-secondary" data-o-authenticated="1">⚙️ Settings</a>
+            <a href="#o-logout-link" class="btn btn-secondary" data-o-authenticated="1">Log Out</a>
         </div>
     </header>
 
@@ -171,56 +167,23 @@
         ⚠️ <strong>Risk Disclosure:</strong> All quantitative outputs, trend summaries, and calculated expected moves are generated strictly for computational educational research and do not constitute formal investment advice.
     </footer>
 
-    <!-- STATE MANAGEMENT SYSTEM -->
+    <!-- STREAMLIT FRAME STATE CONTROLLER -->
     <script>
-        const loggedOutElements = document.querySelectorAll('.logged-out-only');
-        const loggedInElements = document.querySelectorAll('.logged-in-only');
         const appIframe = document.getElementById('engine-iframe');
 
-        // Function to handle layout visibility toggles
-        function updateUIState(isAuthenticated) {
-            if (isAuthenticated) {
-                loggedOutElements.forEach(el => el.style.display = 'none');
-                loggedInElements.forEach(el => el.style.display = 'inline-block');
-            } else {
-                loggedOutElements.forEach(el => el.style.display = 'inline-block');
-                loggedInElements.forEach(el => el.style.display = 'none');
-            }
-        }
-
-        // Outseta Initialization & Event Triggers
+        // Dynamically upgrades the internal Streamlit frame state when tokens are set or pulled
         Outseta.on('init', function() {
-            const token = Outseta.getAccessToken();
-            if (token) {
-                updateUIState(true);
+            if (Outseta.getAccessToken()) {
                 appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
-            } else {
-                updateUIState(false);
             }
         });
 
         Outseta.on('accessToken.set', function(token) {
-            updateUIState(true);
             appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
         });
         
         Outseta.on('accessToken.removed', function() {
-            updateUIState(false);
             appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
-        });
-
-        // Event Actions for Popup triggers
-        document.getElementById('nav-login').addEventListener('click', function() {
-            Outseta.auth.open({ widgetMode: 'login' });
-        });
-
-        document.getElementById('nav-settings').addEventListener('click', function() {
-            Outseta.profile.open();
-        });
-
-        document.getElementById('nav-logout').addEventListener('click', function(e) {
-            e.preventDefault();
-            Outseta.auth.logout();
         });
     </script>
 
