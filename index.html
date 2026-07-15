@@ -124,6 +124,19 @@
             text-overflow: ellipsis;
             z-index: 10;
         }
+
+        /* =============================================================
+           STRIPE & POPUP OVERFLOW PATCH
+        ============================================================= */
+        [id^="outseta-"], .o-modal, #outseta-profile-embed, div[role="dialog"] {
+            max-height: 95vh !important;
+            height: auto !important;
+            overflow-y: visible !important;
+        }
+        .o-modal-inner, .o-profile-embed-inner, div[class*="modal-content"] {
+            max-height: 85vh !important;
+            overflow-y: auto !important;
+        }
     </style>
 </head>
 <body>
@@ -132,11 +145,11 @@
     <header class="app-header">
         <div class="logo">🦅 Institutional Earnings Engine</div>
         <div class="auth-buttons">
-            <!-- UPGRADE TO PRO: Skips options and forces the Stripe checkout for Plan aWxoPv9V -->
+            <!-- UPGRADE TO PRO: Skips options and forces the Stripe checkout for Pro Plan (aWxoPv9V) -->
             <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=aWxoPv9V&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-primary" data-o-anonymous="1">Upgrade to Pro</a>
             
-            <!-- SIGN UP: Standard free registration / account creation -->
-            <a href="https://jyz.outseta.com/auth?widgetMode=register#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign Up</a>
+            <!-- SIGN UP: Skips options and forces checkout for the Free Plan (rm08YJmX) -->
+            <a href="https://jyz.outseta.com/auth?widgetMode=register&planUid=rm08YJmX&planPaymentTerm=month&skipPlanOptions=true#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign Up</a>
             
             <!-- SIGN IN -->
             <a href="https://jyz.outseta.com/auth?widgetMode=login#o-anonymous" class="btn btn-secondary" data-o-anonymous="1">Sign In</a>
