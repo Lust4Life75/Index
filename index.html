@@ -100,11 +100,13 @@
             overflow: hidden;
         }
 
-        <iframe 
-    id="engine-iframe"
-    src="https://earnings-predictor-pxf1.onrender.com" 
-    allow="clipboard-read; clipboard-write">
-</iframe>
+        iframe#engine-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100% + 40px); /* Crops out Streamlit footer tab cleanly */
+            border: none;
         }
 
         /* Premium Risk Disclaimer Segment */
@@ -162,7 +164,7 @@
     <div class="iframe-container">
         <iframe 
             id="engine-iframe"
-            src="https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true" 
+            src="https://earnings-predictor-pxf1.onrender.com/?embed=true" 
             allow="clipboard-read; clipboard-write">
         </iframe>
     </div>
@@ -177,18 +179,22 @@
         const appIframe = document.getElementById('engine-iframe');
 
         // Force premium features inside the Streamlit iframe when user tokens exist
-Outseta.on('init', function() {
-    if (Outseta.getAccessToken()) {
-        appIframe.src = "https://earnings-predictor-pxf1.onrender.com";
-    } else {
-        appIframe.src = "https://earnings-predictor-pxf1.onrender.com;
-    }
-});
+        Outseta.on('init', function() {
+            if (Outseta.getAccessToken()) {
+                appIframe.src = "https://earnings-predictor-pxf1.onrender.com/?embed=true&premium=true";
+            } else {
+                appIframe.src = "https://earnings-predictor-pxf1.onrender.com/?embed=true";
+            }
+        });
 
-Outseta.on('accessToken.set', function(token) {
-    appIframe.src = "https://earnings-predictor-pxf1.onrender.com";
-});
+        Outseta.on('accessToken.set', function(token) {
+            appIframe.src = "https://earnings-predictor-pxf1.onrender.com/?embed=true&premium=true";
+        });
 
-Outseta.on('accessToken.removed', function() {
-    appIframe.src = "https://earnings-predictor-pxf1.onrender.com";
-});
+        Outseta.on('accessToken.removed', function() {
+            appIframe.src = "https://earnings-predictor-pxf1.onrender.com/?embed=true";
+        });
+    </script>
+
+</body>
+</html>
