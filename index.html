@@ -178,23 +178,19 @@
     <script>
         const appIframe = document.getElementById('engine-iframe');
 
-        // Force premium features inside the Streamlit iframe when user tokens exist
-        Outseta.on('init', function() {
-            if (Outseta.getAccessToken()) {
-                appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
-            } else {
-                appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
-            }
-        });
+        // Example updating the script with your new Render URL
+Outseta.on('init', function() {
+    if (Outseta.getAccessToken()) {
+        appIframe.src = "https://YOUR-NEW-RENDER-URL.onrender.com/?embed=true&premium=true";
+    } else {
+        appIframe.src = "https://YOUR-NEW-RENDER-URL.onrender.com/?embed=true";
+    }
+});
 
-        Outseta.on('accessToken.set', function(token) {
-            appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true&premium=true";
-        });
-        
-        Outseta.on('accessToken.removed', function() {
-            appIframe.src = "https://earnings-predictor-xtak69nc8jmlhvaihtwhwy.streamlit.app/?embed=true";
-        });
-    </script>
+Outseta.on('accessToken.set', function(token) {
+    appIframe.src = "https://YOUR-NEW-RENDER-URL.onrender.com/?embed=true&premium=true";
+});
 
-</body>
-</html>
+Outseta.on('accessToken.removed', function() {
+    appIframe.src = "https://YOUR-NEW-RENDER-URL.onrender.com/?embed=true";
+});
