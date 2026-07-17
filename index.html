@@ -100,13 +100,11 @@
             overflow: hidden;
         }
 
-        iframe#engine-iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: calc(100% + 40px); /* Crops out Streamlit footer tab cleanly */
-            border: none;
+        <iframe 
+    id="engine-iframe"
+    src="https://earnings-predictor-pxf1.onrender.com" 
+    allow="clipboard-read; clipboard-write">
+</iframe>
         }
 
         /* Premium Risk Disclaimer Segment */
