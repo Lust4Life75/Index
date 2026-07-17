@@ -176,19 +176,19 @@
     <script>
         const appIframe = document.getElementById('engine-iframe');
 
-        // Example updating the script with your new Render URL
+        // Force premium features inside the Streamlit iframe when user tokens exist
 Outseta.on('init', function() {
     if (Outseta.getAccessToken()) {
-        appIframe.src = "https://YOUR-NEW-RENDER-URL.onrender.com/?embed=true&premium=true";
+        appIframe.src = "https://earnings-predictor-pxf1.onrender.com";
     } else {
-        appIframe.src = "https://YOUR-NEW-RENDER-URL.onrender.com/?embed=true";
+        appIframe.src = "https://earnings-predictor-pxf1.onrender.com;
     }
 });
 
 Outseta.on('accessToken.set', function(token) {
-    appIframe.src = "https://YOUR-NEW-RENDER-URL.onrender.com/?embed=true&premium=true";
+    appIframe.src = "https://earnings-predictor-pxf1.onrender.com";
 });
 
 Outseta.on('accessToken.removed', function() {
-    appIframe.src = "https://YOUR-NEW-RENDER-URL.onrender.com/?embed=true";
+    appIframe.src = "https://earnings-predictor-pxf1.onrender.com";
 });
